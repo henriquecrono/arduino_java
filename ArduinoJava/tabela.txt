@@ -1,0 +1,19 @@
+CREATE DATABASE aeroporto;
+
+USE aeroporto;
+
+CREATE TABLE bagagem (
+	tagUID VARCHAR(8) PRIMARY KEY,
+	nomePassageiro VARCHAR(50),
+	poltronaPassageiro VARCHAR(5)
+);
+
+INSERT INTO bagagem (tagUID, nomePassageiro, poltronaPassageiro) VALUES (
+	"F9618A47",
+	"João Maria",
+	"A01"
+),(
+	"13CDC41B",
+	"Maria João",
+	"A02"
+);
