@@ -3,6 +3,8 @@ import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortEvent;
 import com.fazecast.jSerialComm.SerialPortPacketListener;
 import java.io.UnsupportedEncodingException;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -11,6 +13,18 @@ import br.edu.unicid.bean.Bagagem;
 import br.edu.unicid.dao.BagagemDAO;
 
 public final class PacketListener implements SerialPortPacketListener {
+
+	public String lastUID;
+	
+	public void cleanLastUID () {
+		Timer timer = new Timer();
+		timer.scheduleAtFixedRate(new TimerTask() {
+			  @Override
+			  public void run() {
+			    lastUID = "";
+			  }
+			}, 0, 10000);
+	}
 
 	@Override
 	public int getListeningEvents() {
@@ -33,7 +47,7 @@ public final class PacketListener implements SerialPortPacketListener {
 			Logger.getLogger(PacketListener.class.getName()).log(Level.SEVERE, null, ex);
 		}
 
-		if (byteSize == JSerialCommArduino.PACKET_SIZE_IN_BYTES) {           
+		if (byteSize == JSerialCommArduino.PACKET_SIZE_IN_BYTES && !tagUID.equals(lastUID)) {
 			Bagagem bagagem = new Bagagem();
 
 			try {
@@ -48,8 +62,10 @@ public final class PacketListener implements SerialPortPacketListener {
 					+ "\nPassageiro: " + bagagem.getNomePassageiro()
 					+ "\nPoltrona: " + bagagem.getPoltronaPassageiro()
 					+ "\nFavor se dirigir até o setor vermelho.");
-			
+
 			System.out.println("==============================");
+			
+			lastUID = tagUID;
 		}
 	}
 }
